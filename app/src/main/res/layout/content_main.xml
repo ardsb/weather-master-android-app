@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#65050505"
+    android:fadeScrollbars="false"
+    android:hapticFeedbackEnabled="false"
+    tools:context=".View.MainActivity"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <ImageView
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/backround"
+        android:background="#65050505"
+        android:alpha="0.5"
+
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:weightSum="3">
+
+
+
+        <EditText
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="14dp"
+            android:layout_marginRight="0dp"
+            android:layout_weight="2.5"
+            android:background="@color/white"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:id="@+id/txtSearch"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_marginRight="10dp"
+            android:layout_height="match_parent"
+            android:text="Search"
+            android:id="@+id/btnSearch"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_height="match_parent"
+           android:text="Current"
+            android:id="@+id/btnCurrent"
+            android:layout_marginRight="10dp"
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Temp"
+            android:textColor="@color/white"
+            android:textSize="50dp"
+            android:layout_marginTop="80dp"
+            android:id="@+id/txtTemp"/>
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Feels Like"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:id="@+id/txtFeelsLike"
+            android:layout_marginTop="0dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Temp Min"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:id="@+id/txtTempMin"
+            android:layout_marginTop="0dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Temp Max"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:id="@+id/txtTempMax"
+            android:layout_marginTop="0dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Humidity"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:id="@+id/txtHumidity"
+            android:layout_marginTop="0dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pressure"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:id="@+id/txtPressure"
+            android:layout_marginTop="0dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
+
+
+    </LinearLayout>
+
+
+
+
+
+</FrameLayout>

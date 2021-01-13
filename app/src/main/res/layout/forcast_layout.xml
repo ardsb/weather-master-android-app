@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/txtForecastFeel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:text="Date"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/txtForecastFeelsLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:text="Feels Like"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/txtForecastTempMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:text="Temp Min"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/txtForecastTempMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:text="Temp Max"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/txtForecastHumidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:text="Humidity"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/txtForecastPressure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:text="Pressure"
+            android:textSize="20dp" />
+    </LinearLayout>
+</LinearLayout>
