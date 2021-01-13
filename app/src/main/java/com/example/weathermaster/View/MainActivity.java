@@ -1,6 +1,14 @@
 package com.example.weathermaster.View;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import com.example.weathermaster.Adapter.ForecastAdapter;
@@ -10,11 +18,17 @@ import com.example.weathermaster.Model.WeatherResponse;
 import com.example.weathermaster.R;
 import com.example.weathermaster.Services.ApiClient;
 import com.example.weathermaster.Services.ApiInterface;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.TextUtils;
@@ -27,18 +41,31 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+
+public class MainActivity extends AppCompatActivity implements LocationListener {
+
+    public FusedLocationProviderClient client;
+
 
     Button btnSearch, btnCurrent;
-    TextView txtTemp, txtPressure, txtHumidity, txtTempMin, txtTempMax, txtFeelsLike;
+    TextView txtTemp, txtPressure, txtHumidity, txtTempMin, txtTempMax, txtFeelsLike,txtAddress;
     EditText search;
     RecyclerView recyclerView;
+    LocationManager locationManager;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +74,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        btnSearch = findViewById(R.id.btnSearch);
-//        btnCurrent=findViewById(R.id.btnCurrent);
+        if (ContextCompat.checkSelfPermission(MainActivity.this, ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            }, 100);
+        }
+
+
+
+
 
 
         txtTemp = findViewById(R.id.txtTemp);
@@ -57,10 +92,12 @@ public class MainActivity extends AppCompatActivity {
         txtTempMin = findViewById(R.id.txtTempMin);
         txtTempMax = findViewById(R.id.txtTempMax);
         txtFeelsLike = findViewById(R.id.txtFeelsLike);
+        txtAddress=findViewById(R.id.txtAddress);
 
         search = findViewById(R.id.txtSearch);
         recyclerView = findViewById(R.id.recycler);
 
+        btnSearch=findViewById(R.id.btnSearch);
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +131,29 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        btnCurrent=findViewById(R.id.btnCurrent);
+        btnCurrent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                getLocation();
+            }
+        });
+
     }
+
+    @SuppressLint("MissingPermission")
+    private void getLocation() {
+        try {
+            locationManager=(LocationManager) getApplication().getSystemService(LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000, 5,MainActivity.this);
+        }catch (Exception e){
+
+            e.printStackTrace();
+        }
+
+    }
+
 
     private void getWeatherData(String name) {
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
@@ -191,5 +250,39 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+
+        Toast.makeText(this,"This is the Longitude"+location.getLongitude()+"This is Latitude"+location.getLatitude(),Toast.LENGTH_SHORT).show();
+        try{
+
+            Geocoder geocoder=new Geocoder(MainActivity.this, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            String address = addresses.get(0).getAddressLine(0);
+
+            txtAddress.setText(address);
+        }catch (Exception e){
+
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {
+
     }
 }
