@@ -2,6 +2,7 @@ package com.example.weathermaster.View;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -31,6 +32,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.renderscript.Sampler;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -38,6 +40,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,8 +66,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     EditText search;
     RecyclerView recyclerView;
     LocationManager locationManager;
-
-
+    private ProgressDialog gpsProgressDialog, apiProgressBar;
 
 
     @Override
@@ -74,17 +76,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        gpsProgressDialog = new ProgressDialog(this);
+        gpsProgressDialog.setTitle("Fetching GPS location");
+        gpsProgressDialog.setMessage("Please hold tight while we get your current location");
+        gpsProgressDialog.setCancelable(false);
+
+
+        apiProgressBar = new ProgressDialog(this);
+        apiProgressBar.setTitle("Please Wait...");
+        apiProgressBar.setMessage("Fetching Data");
+        apiProgressBar.setCancelable(false);
+
         if (ContextCompat.checkSelfPermission(MainActivity.this, ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION
             }, 100);
         }
-
-
-
-
-
 
         txtTemp = findViewById(R.id.txtTemp);
         txtPressure = findViewById(R.id.txtPressure);
@@ -103,12 +111,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             @Override
             public void onClick(View v) {
 
-
-//          Calling the API
                 getWeatherData(search.getText().toString().trim());
-                getForecastData(search.getText().toString().trim());
-
-
                 String val = search.getText().toString().trim();
 
                 if (!TextUtils.isEmpty(val)) {
@@ -144,9 +147,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     @SuppressLint("MissingPermission")
     private void getLocation() {
+
+        if (!gpsProgressDialog.isShowing()) {
+            gpsProgressDialog.show();
+        }
+
         try {
             locationManager=(LocationManager) getApplication().getSystemService(LOCATION_SERVICE);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000, 5,MainActivity.this);
+
+
         }catch (Exception e){
 
             e.printStackTrace();
@@ -155,16 +165,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
 
-    private void getWeatherData(String name) {
+    private void getWeatherData(String searchQuery) {
+        if (!apiProgressBar.isShowing()) {
+            apiProgressBar.show();
+        }
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
-        Call<WeatherResponse> call = apiInterface.getWeatherData(name);
+        Call<WeatherResponse> call = apiInterface.getWeatherData(searchQuery);
 
         call.enqueue(new Callback<WeatherResponse>() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
 
+                if (apiProgressBar.isShowing()) {
+                    apiProgressBar.hide();
+                }
                 if (response.isSuccessful()) {
                     txtTemp.setText("Temp " + response.body().getMain().getTemp() + "C");
                     txtFeelsLike.setText("Feels Like: " + response.body().getMain().getFeelsLike() + "C");
@@ -174,15 +190,62 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     txtPressure.setText("Pressure: " + response.body().getMain().getPressure());
 
                 } else {
-
                     Toast.makeText(MainActivity.this, response.message(), Toast.LENGTH_SHORT).show();
                 }
+                getForecastData(searchQuery);
 
 
             }
 
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
+
+                if (apiProgressBar.isShowing()) {
+                    apiProgressBar.hide();
+                }
+            }
+
+        });
+
+
+    }
+
+    private void getWeatherDataLatLon(String lat, String lon) {
+        if (!apiProgressBar.isShowing()) {
+            apiProgressBar.show();
+        }
+        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<WeatherResponse> call = apiInterface.getWeatherDataLatLon(lat,lon);
+
+        call.enqueue(new Callback<WeatherResponse>() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                if (apiProgressBar.isShowing()) {
+                    apiProgressBar.hide();
+                }
+                if (response.isSuccessful()) {
+                    txtTemp.setText("Temp " + response.body().getMain().getTemp() + "C");
+                    txtFeelsLike.setText("Feels Like: " + response.body().getMain().getFeelsLike() + "C");
+                    txtHumidity.setText("Humidity: " + response.body().getMain().getHumidity() + "%");
+                    txtTempMin.setText(" Temp Min: " + response.body().getMain().getTempMin() + "C");
+                    txtTempMax.setText("Temp Max: " + response.body().getMain().getTempMax() + "C");
+                    txtPressure.setText("Pressure: " + response.body().getMain().getPressure());
+
+                } else {
+                    Toast.makeText(MainActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                }
+
+                getForecastDataLatLon(lat,lon);
+
+            }
+
+            @Override
+            public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                if (apiProgressBar.isShowing()) {
+                    apiProgressBar.hide();
+                }
 
 
             }
@@ -192,7 +255,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
 
+
+
+
     private void getForecastData(String name) {
+        if (!apiProgressBar.isShowing()) {
+            apiProgressBar.show();
+        }
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         Call<ForecastResponse> call = apiInterface.getForecastData(name);
@@ -202,6 +271,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             @Override
             public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
 
+                if (apiProgressBar.isShowing()) {
+                    apiProgressBar.hide();
+                }
                 if (response.isSuccessful()) {
                     List<ForecastListItem> forecastListItems = response.body().getList();
 
@@ -220,13 +292,50 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             @Override
             public void onFailure(Call<ForecastResponse> call, Throwable t) {
-
+                if (apiProgressBar.isShowing()) {
+                    apiProgressBar.hide();
+                }
 
             }
         });
     }
 
 
+    private void getForecastDataLatLon(String lat,String lon) {
+        if (!apiProgressBar.isShowing()) {
+            apiProgressBar.show();
+        }
+        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<ForecastResponse> call = apiInterface.getForecastDataLatLon(lat,lon);
+
+        call.enqueue(new Callback<ForecastResponse>() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
+                if (apiProgressBar.isShowing()) {
+                    apiProgressBar.hide();
+                }
+                if (response.isSuccessful()) {
+                    List<ForecastListItem> forecastListItems = response.body().getList();
+                    ForecastAdapter adapter = new ForecastAdapter(forecastListItems, R.layout.forcast_layout, getApplicationContext());
+                    recyclerView.setAdapter(adapter);
+
+                } else {
+                    Toast.makeText(MainActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ForecastResponse> call, Throwable t) {
+
+                if (apiProgressBar.isShowing()) {
+                    apiProgressBar.hide();
+                }
+            }
+        });
+    }
 
 
 
@@ -257,13 +366,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     @Override
     public void onLocationChanged(@NonNull Location location) {
 
+        if (gpsProgressDialog.isShowing()) {
+            gpsProgressDialog.hide();
+        }
+        String lat = String.valueOf(location.getLatitude());
+        String lon = String.valueOf(location.getLongitude());
+        getWeatherDataLatLon(lat, lon);
         Toast.makeText(this,"This is the Longitude"+location.getLongitude()+"This is Latitude"+location.getLatitude(),Toast.LENGTH_SHORT).show();
         try{
-
             Geocoder geocoder=new Geocoder(MainActivity.this, Locale.getDefault());
             List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             String address = addresses.get(0).getAddressLine(0);
-
             txtAddress.setText(address);
         }catch (Exception e){
 
