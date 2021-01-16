@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public FusedLocationProviderClient client;
 
 
-    Button btnSearch, btnCurrent;
+    Button btnSearch, btnCurrent,btnMap;
     TextView txtTemp, txtPressure, txtHumidity, txtTempMin, txtTempMax, txtFeelsLike,txtAddress;
     EditText search;
     RecyclerView recyclerView;
@@ -75,6 +76,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        btnMap=findViewById(R.id.btnMap);
+        btnMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(MainActivity.this, MapsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         gpsProgressDialog = new ProgressDialog(this);
         gpsProgressDialog.setTitle("Fetching GPS location");
