@@ -6,13 +6,13 @@ public class ForecastListItem {
 
 
     @SerializedName("main")
-    private WeatherResults main;
+    private Main main;
 
-    public WeatherResults getMain() {
+    public Main getMain() {
         return main;
     }
 
-    public void setMain(WeatherResults main) {
+    public void setMain(Main main) {
         this.main = main;
     }
 

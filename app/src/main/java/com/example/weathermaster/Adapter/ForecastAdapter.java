@@ -9,9 +9,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.weathermaster.Model.Forecast;
 import com.example.weathermaster.Model.ForecastListItem;
-import com.example.weathermaster.Model.WeatherResults;
+import com.example.weathermaster.Model.Main;
 import com.example.weathermaster.R;
 
 import java.util.List;
@@ -68,12 +67,12 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         holder.txtForecastDate.setText(forecastListItem);
 
 
-        WeatherResults weatherResults = forecast.get(position).getMain();
-        holder.txtForecastPressure.setText("Pressure: " + weatherResults.getPressure());
-        holder.txtForecastHumidity.setText("Humidity: " + weatherResults.getHumidity()+"%");
-        holder.txtForecastTempMin.setText("Temp Min: " + weatherResults.getTempMin()+"C");
-        holder.txtForecastTempMax.setText("Temp Max: " + weatherResults.getTempMax()+"C");
-        holder.txtForecastFeelsLike.setText("Feels Like: "+ weatherResults.getFeelsLike()+"C");
+        Main main = forecast.get(position).getMain();
+        holder.txtForecastPressure.setText("Pressure: " + main.getPressure());
+        holder.txtForecastHumidity.setText("Humidity: " + main.getHumidity()+"%");
+        holder.txtForecastTempMin.setText("Temp Min: " + main.getTempMin()+"C");
+        holder.txtForecastTempMax.setText("Temp Max: " + main.getTempMax()+"C");
+        holder.txtForecastFeelsLike.setText("Feels Like: "+ main.getFeelsLike()+"C");
 
 
 

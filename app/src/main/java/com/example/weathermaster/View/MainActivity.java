@@ -11,6 +11,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.weathermaster.Adapter.ForecastAdapter;
@@ -35,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.renderscript.Sampler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import android.view.Menu;
@@ -59,6 +61,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
+    private static final String TAG = "MainActivity";
     public FusedLocationProviderClient client;
 
 
@@ -68,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     RecyclerView recyclerView;
     LocationManager locationManager;
     private ProgressDialog gpsProgressDialog, apiProgressBar;
+    private WeatherResponse weatherResponse;
+
 
 
     @Override
@@ -81,8 +86,24 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         btnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent= new Intent(MainActivity.this, MapsActivity.class);
-                startActivity(intent);
+
+                if (weatherResponse != null){
+
+                    String uri = String.format(
+                            Locale.ENGLISH,
+                            "http://maps.google.com/maps?q=loc:%f,%f",
+                            weatherResponse.getCoord().getLat(),
+                            weatherResponse.getCoord().getLon());
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                    startActivity(intent);
+
+                }else {
+
+                    Toast.makeText(MainActivity.this,"Please select your current location or a select city from the inout field",Toast.LENGTH_LONG).show();
+                }
+
+
+
             }
         });
 
@@ -192,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     apiProgressBar.hide();
                 }
                 if (response.isSuccessful()) {
+                    weatherResponse=response.body();
                     txtTemp.setText("Temp " + response.body().getMain().getTemp() + "C");
                     txtFeelsLike.setText("Feels Like: " + response.body().getMain().getFeelsLike() + "C");
                     txtHumidity.setText("Humidity: " + response.body().getMain().getHumidity() + "%");
@@ -209,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
-
+                Log.e(TAG, String.format("onFailure: %s", t.getMessage()));
                 if (apiProgressBar.isShowing()) {
                     apiProgressBar.hide();
                 }
@@ -236,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     apiProgressBar.hide();
                 }
                 if (response.isSuccessful()) {
+                    weatherResponse=response.body();
                     txtTemp.setText("Temp " + response.body().getMain().getTemp() + "C");
                     txtFeelsLike.setText("Feels Like: " + response.body().getMain().getFeelsLike() + "C");
                     txtHumidity.setText("Humidity: " + response.body().getMain().getHumidity() + "%");
@@ -253,8 +276,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                Log.e(TAG, String.format("onFailure: %s", t.getMessage()));
                 if (apiProgressBar.isShowing()) {
                     apiProgressBar.hide();
+
                 }
 
 
@@ -388,6 +413,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             String address = addresses.get(0).getAddressLine(0);
             txtAddress.setText(address);
+
         }catch (Exception e){
 
             e.printStackTrace();

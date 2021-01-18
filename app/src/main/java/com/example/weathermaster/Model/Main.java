@@ -2,7 +2,7 @@ package com.example.weathermaster.Model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class WeatherResults {
+public class Main {
 
 
     @SerializedName("temp")
