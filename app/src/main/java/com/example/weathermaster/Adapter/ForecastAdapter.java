@@ -39,7 +39,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
             txtForecastTempMax=v.findViewById(R.id.txtForecastTempMax);
             txtForecastFeelsLike=v.findViewById(R.id.txtForecastFeelsLike);
 
-            txtForecastDate=v.findViewById(R.id.txtForecastFeel);
+            txtForecastDate=v.findViewById(R.id.txtForecastDate);
 
 
         }
@@ -68,11 +68,11 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
 
         Main main = forecast.get(position).getMain();
-        holder.txtForecastPressure.setText("Pressure: " + main.getPressure());
-        holder.txtForecastHumidity.setText("Humidity: " + main.getHumidity()+"%");
-        holder.txtForecastTempMin.setText("Temp Min: " + main.getTempMin()+"C");
-        holder.txtForecastTempMax.setText("Temp Max: " + main.getTempMax()+"C");
-        holder.txtForecastFeelsLike.setText("Feels Like: "+ main.getFeelsLike()+"C");
+        holder.txtForecastPressure.setText(String.format("Pressure: %s",main.getPressure()));
+        holder.txtForecastHumidity.setText(String.format("Humidity: %s %%",main.getHumidity()));
+        holder.txtForecastTempMin.setText(String.format("Temp Min: %s C",main.getTempMin()));
+        holder.txtForecastTempMax.setText(String.format("Temp Max: %s C",main.getTempMax()));
+        holder.txtForecastFeelsLike.setText(String.format("Feels Like: %s C",main.getFeelsLike()));
 
 
 

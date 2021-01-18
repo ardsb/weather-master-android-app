@@ -155,14 +155,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         });
 
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
 
         btnCurrent=findViewById(R.id.btnCurrent);
@@ -214,12 +206,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 }
                 if (response.isSuccessful()) {
                     weatherResponse=response.body();
-                    txtTemp.setText("Temp " + response.body().getMain().getTemp() + "C");
-                    txtFeelsLike.setText("Feels Like: " + response.body().getMain().getFeelsLike() + "C");
-                    txtHumidity.setText("Humidity: " + response.body().getMain().getHumidity() + "%");
-                    txtTempMin.setText(" Temp Min: " + response.body().getMain().getTempMin() + "C");
-                    txtTempMax.setText("Temp Max: " + response.body().getMain().getTempMax() + "C");
-                    txtPressure.setText("Pressure: " + response.body().getMain().getPressure());
+
+                    txtTemp.setText(String.format("Temp: %s C" ,response.body().getMain().getTemp()));
+                    txtFeelsLike.setText(String.format("Feels Like: %s C" ,response.body().getMain().getFeelsLike()));
+                    txtHumidity.setText(String.format("Humidity: %s %%" ,response.body().getMain().getHumidity()));
+                    txtTempMin.setText(String.format("Temp Min: %s C" ,response.body().getMain().getTempMin()));
+                    txtTempMax.setText(String.format("Temp Max: %s C" ,response.body().getMain().getTempMax()));
+                    txtPressure.setText(String.format("Pressure: %s" ,response.body().getMain().getPressure()));
 
                 } else {
                     Toast.makeText(MainActivity.this, response.message(), Toast.LENGTH_SHORT).show();
@@ -259,12 +252,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 }
                 if (response.isSuccessful()) {
                     weatherResponse=response.body();
-                    txtTemp.setText("Temp " + response.body().getMain().getTemp() + "C");
-                    txtFeelsLike.setText("Feels Like: " + response.body().getMain().getFeelsLike() + "C");
-                    txtHumidity.setText("Humidity: " + response.body().getMain().getHumidity() + "%");
-                    txtTempMin.setText(" Temp Min: " + response.body().getMain().getTempMin() + "C");
-                    txtTempMax.setText("Temp Max: " + response.body().getMain().getTempMax() + "C");
-                    txtPressure.setText("Pressure: " + response.body().getMain().getPressure());
+                    txtTemp.setText(String.format("Temp: %s C" ,response.body().getMain().getTemp()));
+                    txtFeelsLike.setText(String.format("Feels Like: %s C" ,response.body().getMain().getFeelsLike()));
+                    txtHumidity.setText(String.format("Humidity: %s %%" ,response.body().getMain().getHumidity()));
+                    txtTempMin.setText(String.format("Temp Min: %s C" ,response.body().getMain().getTempMin()));
+                    txtTempMax.setText(String.format("Temp Max: %s C" ,response.body().getMain().getTempMax()));
+                    txtPressure.setText(String.format("Pressure: %s" ,response.body().getMain().getPressure()));
 
                 } else {
                     Toast.makeText(MainActivity.this, response.message(), Toast.LENGTH_SHORT).show();
